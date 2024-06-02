@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"log"
-	"nba-players-statistics/cmd/server"
 	"nba-players-statistics/internal"
+	"nba-players-statistics/server"
 	"os"
 	"os/signal"
 	"time"
