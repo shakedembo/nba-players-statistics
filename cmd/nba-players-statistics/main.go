@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	"log"
-	"nba-players-statistics/internal"
-	"nba-players-statistics/server"
 	"os"
 	"os/signal"
 	"time"
+
+	"nba-players-statistics/config"
+	"nba-players-statistics/internal"
+	"nba-players-statistics/server"
 )
 
 var logger = log.New(os.Stdout, "url-shortener ", log.LstdFlags|log.Lshortfile)
@@ -16,15 +18,26 @@ func main() {
 	logger.Print("Initializing...")
 	defer logger.Print("Bye Bye :)")
 
-	service := internal.NewSimpleStatisticsService()
-	controller := internal.NewStatisticsController(service)
+	dbConfig := config.NewDbConfig()
+	dao, err := internal.NewPsqlStatisticsDao(dbConfig, logger)
+	if err != nil {
+		return
+	}
+	defer dao.Disconnect()
+	service := internal.NewSimpleStatisticsService(dao, logger)
+	controller := internal.NewStatisticsController(service, logger)
 	timeout := 30 * time.Second
 	port := "80" // os.Getenv("SERVER_PORT")
 
 	server.Init(logger)
 	server.AddHandler("/health", controller.Health, timeout, server.GET)
+	server.AddHandler("/log", controller.Log, timeout, server.POST)
+	server.AddHandler("/get-statistics", controller.GetStats, timeout, server.GET)
 	server.Listen(port)
 
+	logger.Print("--- Initialization Completed Successfully ---")
+
+	gracefullyQuit()
 }
 
 func gracefullyQuit() {
