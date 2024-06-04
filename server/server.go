@@ -56,8 +56,6 @@ func Listen(port string) {
 
 type Handler[T, TE any] func(ctx context.Context, req T) (res TE, err error, status int)
 
-type void struct{}
-
 func LoggerMiddleware[T, TE any](
 	handler Handler[T, TE],
 	logger *log.Logger) (loggedHandler Handler[T, TE]) {

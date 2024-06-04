@@ -2,7 +2,9 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"log"
+	"nba-players-statistics/internal/utils"
 
 	"nba-players-statistics/pkg"
 )
@@ -13,13 +15,21 @@ type StatisticsService interface {
 }
 
 type SimpleStatisticsService struct {
-	logger *log.Logger
-	dao    StatisticsDao
+	logger    *log.Logger
+	dao       StatisticsDao
+	validator utils.Validator[pkg.PlayerStats]
 }
 
 func (s *SimpleStatisticsService) Log(ctx context.Context, request pkg.LogRequest) error {
-	//TODO implement me
-	panic("implement me")
+	context.WithValue(ctx, utils.PlayerId, request.PlayerId)
+
+	if !s.validator.IsValid(request.PlayerData) {
+		errText := "the data that was provided is not valid, didn't log it in the system"
+		s.logger.Printf(errText)
+		return errors.New(errText)
+	}
+
+	return s.dao.Log(ctx, request)
 }
 
 func (s *SimpleStatisticsService) GetStatistics(ctx context.Context, request pkg.GetStatisticsRequest) error {

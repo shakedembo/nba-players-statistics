@@ -12,14 +12,15 @@ import (
 	"nba-players-statistics/server"
 )
 
-var logger = log.New(os.Stdout, "url-shortener ", log.LstdFlags|log.Lshortfile)
+var logger = log.New(os.Stdout, "nba-player-statistics ", log.LstdFlags|log.Lshortfile)
 
 func main() {
+	ctx := context.Background()
 	logger.Print("Initializing...")
 	defer logger.Print("Bye Bye :)")
 
 	dbConfig := config.NewDbConfig()
-	dao, err := internal.NewPsqlStatisticsDao(dbConfig, logger)
+	dao, err := internal.NewPsqlStatisticsDao(ctx, dbConfig, logger)
 	if err != nil {
 		return
 	}

@@ -1,6 +1,11 @@
 package models
 
+import "github.com/uptrace/bun"
+
 type Player struct {
-	Id   int
-	Name string
+	bun.BaseModel `bun:"table:players,alias:p"`
+
+	Id     int `bun:",pk,autoincrement"`
+	Name   string
+	TeamId int
 }

@@ -1,6 +1,6 @@
 package pkg
 
-type LogData struct {
+type PlayerStats struct {
 	Points        uint8
 	Rebounds      uint8
 	Assists       uint8
@@ -12,8 +12,9 @@ type LogData struct {
 }
 
 type LogRequest struct {
-	PlayerId int
-	Data     LogData
+	GameId     int
+	PlayerId   int
+	PlayerData PlayerStats
 }
 
 type LogResponse struct {
