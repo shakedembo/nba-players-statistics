@@ -4,6 +4,7 @@ import "github.com/uptrace/bun"
 
 type Season struct {
 	bun.BaseModel `bun:"table:seasons,alias:s"`
-	StartYear     uint16 `bun:",pk"`
-	EndYear       uint16 `bun:",pk"`
+
+	Id    int     `bun:",pk"`
+	Games []*Game `bun:"rel:has-many,join:id=season_id"`
 }
