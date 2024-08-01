@@ -28,7 +28,7 @@ func main() {
 	service := internal.NewSimpleStatisticsService(dao, logger)
 	controller := internal.NewStatisticsController(service, logger)
 	timeout := 30 * time.Second
-	port := "80" // os.Getenv("SERVER_PORT")
+	port := "80" //TODO: os.Getenv("SERVER_PORT")
 
 	server.Init(logger)
 	server.AddHandler("/health", controller.Health, timeout, server.GET)

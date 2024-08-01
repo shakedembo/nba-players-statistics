@@ -17,6 +17,8 @@ import (
 type StatisticsDao interface {
 	Disconnect()
 	Log(ctx context.Context, data pkg.LogRequest) error
+	CreateSeason() error
+	GetCurrentSeason() (*models.Season, error)
 }
 
 type PsqlStatisticsDao struct {
@@ -32,12 +34,12 @@ func NewPsqlStatisticsDao(ctx context.Context, config *config.DbConfig, logger *
 	db := bun.NewDB(sqlDb, pgdialect.New())
 
 	dbModels := []any{
+		&models.Game{},
 		&models.Player{},
 		&models.PlayerLog{},
+		&models.Season{},
 		&models.Team{},
 		&models.TeamLog{},
-		&models.Game{},
-		&models.Season{},
 	}
 	var errs = errors.AggregateError{}
 	for _, model := range dbModels {
@@ -59,18 +61,28 @@ func NewPsqlStatisticsDao(ctx context.Context, config *config.DbConfig, logger *
 	}, nil
 }
 
-func createTable[T any](ctx context.Context, db *bun.DB, model T) (sql.Result, error) {
-	return db.NewCreateTable().IfNotExists().Model(model).Exec(ctx)
-}
-
-func (p *PsqlStatisticsDao) Log(ctx context.Context, data pkg.LogRequest) error {
-	panic("not implemented")
-}
-
 func (p *PsqlStatisticsDao) Disconnect() {
 	if err := p.db.Close(); err != nil {
 		p.logger.Printf("error occurred trying to close connection to psql db. err: `%v`", err)
 		return
 	}
 	p.logger.Printf("closed psql db connection successfully")
+}
+
+func (p *PsqlStatisticsDao) Log(ctx context.Context, data pkg.LogRequest) error {
+	panic("not implemented")
+}
+
+func (p *PsqlStatisticsDao) CreateSeason() error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (p *PsqlStatisticsDao) GetCurrentSeason() (*models.Season, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func createTable[T any](ctx context.Context, db *bun.DB, model T) (sql.Result, error) {
+	return db.NewCreateTable().IfNotExists().Model(model).Exec(ctx)
 }

@@ -4,9 +4,13 @@ import (
 	"context"
 	"errors"
 	"log"
-	"nba-players-statistics/internal/utils"
 
+	"nba-players-statistics/internal/utils"
 	"nba-players-statistics/pkg"
+)
+
+const (
+	NumberOfGamesInSeason = 1230
 )
 
 type StatisticsService interface {
@@ -28,6 +32,22 @@ func (s *SimpleStatisticsService) Log(ctx context.Context, request pkg.LogReques
 		s.logger.Printf(errText)
 		return errors.New(errText)
 	}
+
+	season, err := s.dao.GetCurrentSeason()
+	if err != nil {
+		s.logger.Printf("error occurred trying to get the current season, Error: `%s`", err.Error())
+	}
+
+	if len(season.Games) > int(request.GameNumber) {
+	}
+
+	//if request.GameNumber == 1 {
+	//	if err := s.dao.CreateSeason(); err != nil {
+	//		s.logger.Printf("error occurred trying to create a new season for the first game. Error: `%s`",
+	//			err.Error())
+	//		return err
+	//	}
+	//}
 
 	return s.dao.Log(ctx, request)
 }

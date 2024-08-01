@@ -25,6 +25,7 @@ func (s *StatisticsController) Log(ctx context.Context, req pkg.LogRequest) (pkg
 		return pkg.LogResponse{}, err, 500
 	}
 
+	//TODO: Implement and return real values
 	return pkg.LogResponse{}, nil, 201
 }
 

@@ -10,6 +10,6 @@ type TeamSeasonAvg struct {
 }
 
 type GetStatisticsResponse struct {
-	PlayerSeasonAvg PlayerSeasonAvg
-	TeamSeasonAvg   TeamSeasonAvg
+	PlayerSeasonAvg PlayerSeasonAvg `json:"playerSeasonAvg"`
+	TeamSeasonAvg   TeamSeasonAvg   `json:"teamSeasonAvg"`
 }
