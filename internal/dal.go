@@ -3,15 +3,14 @@ package internal
 import (
 	"context"
 	"database/sql"
-	"github.com/onsi/gomega/gstruct/errors"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
 	"github.com/uptrace/bun/driver/pgdriver"
 	"log"
 	"nba-players-statistics/config"
+	"nba-players-statistics/internal/migrations"
 	"nba-players-statistics/internal/models"
 	"nba-players-statistics/pkg"
-	"reflect"
 )
 
 type StatisticsDao interface {
@@ -33,25 +32,9 @@ func NewPsqlStatisticsDao(ctx context.Context, config *config.DbConfig, logger *
 
 	db := bun.NewDB(sqlDb, pgdialect.New())
 
-	dbModels := []any{
-		&models.Game{},
-		&models.Player{},
-		&models.PlayerLog{},
-		&models.Season{},
-		&models.Team{},
-		&models.TeamLog{},
-	}
-	var errs = errors.AggregateError{}
-	for _, model := range dbModels {
-		if res, err := createTable(ctx, db, model); err != nil {
-			logger.Printf("error occurred trying to create the db model `%s`. Response: `%v`. Error: `%s`",
-				reflect.TypeOf(model).Name(), res, err.Error())
-			errs = append(errs, err)
-		}
-	}
-
-	if len(errs) != 0 {
-		return nil, errs
+	err := migrations.Initialize(ctx, db)
+	if err != nil {
+		return nil, err
 	}
 
 	logger.Printf("connected to psql db successfully!")
@@ -81,8 +64,4 @@ func (p *PsqlStatisticsDao) CreateSeason() error {
 func (p *PsqlStatisticsDao) GetCurrentSeason() (*models.Season, error) {
 	//TODO implement me
 	panic("implement me")
-}
-
-func createTable[T any](ctx context.Context, db *bun.DB, model T) (sql.Result, error) {
-	return db.NewCreateTable().IfNotExists().Model(model).Exec(ctx)
 }
